@@ -1,0 +1,26 @@
+{
+  "name": "project_manager_front_jquery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiabateJS/project_manager_front_jquery.git"
+  },
+  "author": "DJS Technologies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DiabateJS/project_manager_front_jquery/issues"
+  },
+  "homepage": "https://github.com/DiabateJS/project_manager_front_jquery#readme"
+}
