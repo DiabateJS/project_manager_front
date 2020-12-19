@@ -14,7 +14,8 @@
   <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Bootstrap core CSS -->
-  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
   <!--external css-->
   <link href="lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="css/zabuto_calendar.css">
@@ -43,7 +44,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.html" class="logo"><b>DASH<span>IO</span></b></a>
+      <a href="index.html" class="logo"><b>Project<span>Manager</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -246,12 +247,18 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Sam Soffes</h5>
+          <h5 class="centered">Djs Techno</h5>
           <li class="mt">
             <a class="active" href="index.html">
               <i class="fa fa-dashboard"></i>
               <span>Dashboard</span>
               </a>
+          </li>
+          <li class="mt">
+            <a href="index.html">
+              <i class="fa fa-cubes"></i>
+              <span>Projets</span>
+            </a>
           </li>
           <li class="sub-menu">
             <a href="javascript:;">
@@ -828,7 +835,7 @@
     $(document).ready(function() {
       var unique_id = $.gritter.add({
         // (string | mandatory) the heading of the notification
-        title: 'Welcome to Dashio!',
+        title: 'Welcome to Project Manager !',
         // (string | mandatory) the text inside the notification
         text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo.',
         // (string | optional) the image to display on the left
