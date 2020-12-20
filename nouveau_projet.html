@@ -421,7 +421,7 @@
                 <div class="form-group">
                   <div class="col-lg-offset-2 col-lg-10">
                     <button class="btn btn-theme" type="button" onclick="saveProject()">Save</button>
-                    <button class="btn btn-theme04" type="button">Cancel</button>
+                    <button class="btn btn-theme04" type="button" onclick="clearProjectForm()">Cancel</button>
                   </div>
                 </div>
               </form>
@@ -430,34 +430,47 @@
           <!-- col-lg-12-->
         </div>
         <!-- /row -->
-        <!-- INPUT MESSAGES -->
         <div class="row mt">
-          <div class="col-lg-12">
+          <div class="col-lg-6">
             <div class="form-panel">
-              <h4 class="mb"><i class="fa fa-angle-right"></i> Tâches du projet</h4>
+              <h4 class="mb"><i class="fa fa-angle-right"></i> Information tâches du projet</h4>
+              <table class="table table-striped">
+                <thead>
+                <th>Id</th>
+                <th>Libelle</th>
+                <th>Etat</th>
+                <th></th>
+                </thead>
+                <tbody id="table_tasks_body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-panel">
+              <h4 class="mb"><i class="fa fa-angle-right"></i> Information tâche</h4>
               <form class="form-horizontal tasi-form" method="get">
                 <div class="form-group">
-                  <label class="col-sm-2 col-sm-2 control-label">Projet</label>
+                  <label class="col-sm-2 col-sm-2 control-label">Id</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" readonly>
+                    <input type="text" class="form-control" id="id_tache" readonly>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Libelle</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="libelle_tache">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Estimation</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="estimation_tache">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Status</label>
                   <div class="col-sm-10">
-                    <select class="form-control">
+                    <select class="form-control" id="status_tache">
                       <option value="A_FAIRE">A_FAIRE</option>
                       <option value="EN_COURS">EN_COURS</option>
                       <option value="TERMINE">TERMINE</option>
@@ -467,13 +480,13 @@
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Description</label>
                   <div class="col-sm-10">
-                    <textarea class="form-control"></textarea>
+                    <textarea class="form-control" id="description_tache"></textarea>
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="col-lg-offset-2 col-lg-10">
-                    <button class="btn btn-theme" type="button">Save</button>
-                    <button class="btn btn-theme04" type="button">Cancel</button>
+                    <button class="btn btn-theme" type="button" onclick="saveTask()">Save</button>
+                    <button class="btn btn-theme04" type="button" onclick="clearTaskForm()">Cancel</button>
                   </div>
                 </div>
               </form>
@@ -564,6 +577,7 @@
         description: $("#description_projet").val()
       };
     }
+
     function saveProject() {
       var request = createRequest();
       var url=`${urlBase}project`;
@@ -599,16 +613,34 @@
       $("#libelle_projet").val("");
       $("#status_projet").val("A_FAIRE");
       $("#description_projet").val("");
+      $("#table_tasks_body").html("");
+      clearTaskForm();
     }
 
     function showProject(id){
       var url = `${urlBase}project?id=${id}`;
       $.get(url, function(data) {
+          tasks = data.tasks;
           $("#id_projet").val(data.id);
           $("#libelle_projet").val(data.libelle);
           $("#status_projet").val(data.etat);
           $("#description_projet").val(data.description);
+          var table_tasks_body = "";
+          tasks.forEach(task => {
+            table_tasks_body += "<tr>";
+            table_tasks_body += "<td>"+task.id+"</td>";
+            table_tasks_body += "<td>"+task.libelle+"</td>";
+            table_tasks_body += "<td>"+task.etat+"</td>";
+            table_tasks_body += "<td>";
+            table_tasks_body += "<button class='btn btn-primary btn-xs' onclick='showTask("+id+","+task.id+")'><i class='fa fa-pencil'></i></button>";
+            table_tasks_body += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+id+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
+            table_tasks_body += "</td>";
+            table_tasks_body += "</tr>";
+          });
+          $("#table_tasks_body").html(table_tasks_body);
       });
+      //chargement des tâches du projet
+
     }
 
     function deleteProject(id){
@@ -618,12 +650,105 @@
         type: 'DELETE',
         success: function(response){
           if (response.code === CODE_SUCCES){
-            $("#messages_projet").html("<b>Project supprimer avec succes !");
             swal(PROJECT_NAME,"Suppression Projet réussite !","Success");
             loadProjects();
           }
         }
       });
+    }
+
+    function loadTasks(idProject){
+      var url = `${urlBase}tasks?id=${idProject}`;
+      var code = "";
+      $.get(url, function(data) {
+        data.forEach(task => {
+          code += "<tr>";
+          code += "<td>"+task.id+"</td>";
+          code += "<td>"+task.libelle+"</td>";
+          code += "<td>"+task.etat+"</td>";
+          code += "<td>";
+          code += "<button class='btn btn-primary btn-xs' onclick='showTask("+id+","+task.id+")'><i class='fa fa-pencil'></i></button>";
+          code += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+id+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
+          code += "</td>";
+          code += "</tr>";
+        });
+        $("#table_tasks_body").html(code);
+      });
+    }
+
+    function showTask(idProject,idTask){
+      var url = `${urlBase}task?idProject=${idProject}&idTask=${idTask}`;
+      $.get(url, function(data) {
+        $("#id_tache").val(data.id);
+        $("#libelle_tache").val(data.libelle);
+        $("#status_tache").val(data.etat);
+        $("#estimation_tache").val(data.estimation);
+        $("#description_tache").val(data.description);
+      });
+    }
+
+    function deleteTask(idProject,idTask){
+      var url = `${urlBase}task?idProjet=${idProject}&id=${idTask}`;
+      $.ajax({
+        url: url,
+        type: 'DELETE',
+        success: function(response){
+          if (response.code === CODE_SUCCES){
+            swal(PROJECT_NAME,"Suppression tâche réussite !","Success");
+            loadTasks(idProject);
+            clearTaskForm();
+          }
+        }
+      });
+    }
+
+    function clearTaskForm(){
+      $("#id_tache").val("");
+      $("#libelle_tache").val("");
+      $("#status_tache").val("A_FAIRE");
+      $("#estimation_tache").val("");
+      $("#description_tache").val("");
+    }
+
+    function createTaskRequest(){
+      return {
+        libelle: $("#libelle_tache").val(),
+        etat: $("#status_tache").val(),
+        estimation: $("#estimation_tache").val(),
+        description: $("#description_tache").val()
+      };
+    }
+
+    function saveTask() {
+      var idProject = $("#id_projet").val();
+      var idTask = $("#id_tache").val();
+      var request = createTaskRequest();
+      var url = "";
+      if (idTask === ''){
+        // CREATION D'UNE TACHE
+        url = `${urlBase}task?idProjet=${idProject}`;
+        $.post(url, request, function(data){
+          if (data.code === CODE_SUCCES){
+            swal(PROJECT_NAME,"Création tâche réussite !","Success");
+            loadTasks(idProject);
+            clearTaskForm();
+          }
+        });
+      }else{
+        //MODIFICATION D'UNE TACHE
+        url = `${urlBase}task?idProjet=${idProject}&id=${idTask}`;
+        $.ajax({
+          url: url,
+          data: request,
+          type: 'PUT',
+          success: function(response){
+            if (response.code === CODE_SUCCES){
+              swal(PROJECT_NAME,"Modification tâche réussite !","Success");
+              loadTasks(idProject);
+            }
+          }
+        });
+      }
     }
   </script>
 
