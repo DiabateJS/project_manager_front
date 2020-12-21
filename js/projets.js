@@ -58,7 +58,7 @@ function saveProject() {
 function clearProjectForm(){
     $("#id_projet").val("");
     $("#libelle_projet").val("");
-    $("#status_projet").val("A_FAIRE");
+    $("#status_projet").val(STATUS_A_FAIRE);
     $("#description_projet").val("");
     $("#table_tasks_body").html("");
     clearTaskForm();
