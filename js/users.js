@@ -18,6 +18,19 @@ function loadUsers(){
     });
 }
 
+function loadUsersInCombo(comboId){
+    var url = `${urlBase}users`;
+    var combo_body = "";
+    $.get(url, function(data){
+        data.forEach( user => {
+            combo_body += "<option value='"+user.fullName+"'>";
+            combo_body += user.fullName;
+            combo_body += "</option>";
+        });
+        $("#"+comboId).html(combo_body);
+    });
+}
+
 function createRequest(){
     return {
         fullname: $("#fullname_user").val(),

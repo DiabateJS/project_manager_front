@@ -24,6 +24,7 @@ function showTask(idProject,idTask){
         $("#libelle_tache").val(data.libelle);
         $("#status_tache").val(data.etat);
         $("#estimation_tache").val(data.estimation);
+        $("#user_tache").val(data.user);
         $("#description_tache").val(data.description);
     });
 }
@@ -50,6 +51,7 @@ function clearTaskForm(){
     $("#libelle_tache").val("");
     $("#status_tache").val("A_FAIRE");
     $("#estimation_tache").val("");
+    $("#user_tache").val("");
     $("#description_tache").val("");
 }
 
@@ -58,6 +60,7 @@ function createTaskRequest(){
         libelle: $("#libelle_tache").val(),
         etat: $("#status_tache").val(),
         estimation: $("#estimation_tache").val(),
+        user: $("#user_tache").val(),
         description: $("#description_tache").val()
     };
 }
