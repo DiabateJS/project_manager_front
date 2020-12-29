@@ -8,8 +8,8 @@ function loadTasks(idProject){
             code += "<td>"+task.libelle+"</td>";
             code += "<td>"+task.etat+"</td>";
             code += "<td>";
-            code += "<button class='btn btn-primary btn-xs' onclick='showTask("+id+","+task.id+")'><i class='fa fa-pencil'></i></button>";
-            code += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+id+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
+            code += "<button class='btn btn-primary btn-xs' onclick='showTask("+idProject+","+task.id+")'><i class='fa fa-pencil'></i></button>";
+            code += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+idProject+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
             code += "</td>";
             code += "</tr>";
         });
