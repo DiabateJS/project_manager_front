@@ -1,11 +1,11 @@
 function loadUsers(){
-    var url = `${urlBase}users`;
+    var url = `${urlBase}index.php?operation=enum&type=users`;
     var users_table_body = "";
     $.get(url, function(data){
         data.forEach( user => {
             users_table_body += "<tr>";
             users_table_body += "<td>"+user.id+"</td>";
-            users_table_body += "<td>"+user.fullName+"</td>";
+            users_table_body += "<td>"+user.fullname+"</td>";
             users_table_body += "<td>"+user.login+"</td>";
             users_table_body += "<td>"+user.email+"</td>";
             users_table_body += "<td>";
@@ -19,12 +19,12 @@ function loadUsers(){
 }
 
 function loadUsersInCombo(comboId){
-    var url = `${urlBase}users`;
+    var url = `${urlBase}index.php?operation=enum&type=users`;
     var combo_body = "";
     $.get(url, function(data){
         data.forEach( user => {
-            combo_body += "<option value='"+user.fullName+"'>";
-            combo_body += user.fullName;
+            combo_body += "<option value='"+user.fullname+"'>";
+            combo_body += user.fullname;
             combo_body += "</option>";
         });
         $("#"+comboId).html(combo_body);
@@ -33,6 +33,7 @@ function loadUsersInCombo(comboId){
 
 function createRequest(){
     return {
+        id: $("#id_user").val(),
         fullname: $("#fullname_user").val(),
         login: $("#login_user").val(),
         password: $("#password_user").val(),
@@ -43,12 +44,11 @@ function createRequest(){
 
 function saveUser() {
     var request = createRequest();
-    var url=`${urlBase}user`;
+    var url=`${urlBase}index.php?operation=create&type=user`;
     var id = $("#id_user").val();
     if (id === ''){
         // CREATION USER
         $.post(url, request, function(data){
-            console.log(data);
             if (data.code === CODE_SUCCES){
                 swal(PROJECT_NAME,"Création Utilisateur réussite !","Success");
                 loadUsers();
@@ -56,16 +56,11 @@ function saveUser() {
             }
         });
     }else{
-        //MODIFICATION D'UN PROJET
-        var url = `${urlBase}user?id=${id}`;
-        $.ajax({
-            url: url,
-            data: request,
-            type: 'PUT',
-            success: function(response){
-                if (response.code === CODE_SUCCES){
-                    swal(PROJECT_NAME,"Modification Utilisateur réussite !","Success");
-                }
+        //MODIFICATION D'UN USER
+        var url = `${urlBase}index.php?operation=update&type=user`;
+        $.post(url, request, function(data){
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Modification Utilisateur réussite !","Success");
             }
         });
     }
@@ -81,10 +76,10 @@ function clearUserForm(){
 }
 
 function showUser(id){
-    var url = `${urlBase}user?id=${id}`;
+    var url = `${urlBase}index.php?operation=enum&type=user&id=${id}`;
     $.get(url, function(data) {
         $("#id_user").val(data.id);
-        $("#fullname_user").val(data.fullName);
+        $("#fullname_user").val(data.fullname);
         $("#login_user").val(data.login);
         $("#password_user").val(data.password);
         $("#email_user").val(data.email);
@@ -94,15 +89,14 @@ function showUser(id){
 
 function deleteUser(id){
     if (window.confirm("Etes vous sur de vouloir supprimer ?")){
-        var url = `${urlBase}user?id=${id}`;
-        $.ajax({
-            url: url,
-            type: 'DELETE',
-            success: function(response){
-                if (response.code === CODE_SUCCES){
-                    swal(PROJECT_NAME,"Suppression utilisateur réussite !","Success");
-                    loadUsers();
-                }
+        var url = `${urlBase}index.php?operation=delete&type=user&id=${id}`;
+        $.get(url, function(data) {
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Suppression utilisateur réussite !","Success");
+                loadUsers();
+            }
+            if (data.code === CODE_WARNING){
+                swal(PROJECT_NAME,data.message,"Warning");
             }
         });
     }
