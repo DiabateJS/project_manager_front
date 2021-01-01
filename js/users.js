@@ -61,6 +61,7 @@ function saveUser() {
         $.post(url, request, function(data){
             if (data.code === CODE_SUCCES){
                 swal(PROJECT_NAME,"Modification Utilisateur réussite !","Success");
+                loadUsers();
             }
         });
     }
@@ -97,6 +98,7 @@ function deleteUser(id){
             }
             if (data.code === CODE_WARNING){
                 swal(PROJECT_NAME,data.message,"Warning");
+                loadUsers();
             }
         });
     }
