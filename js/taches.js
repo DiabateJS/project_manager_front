@@ -1,5 +1,6 @@
 function loadTasks(idProject){
-    var url = `${urlBase}tasks?id=${idProject}`;
+    var url = `${urlBase}index.php?operation=enum&type=projet_taches&idProjet=${idProject}`;
+    console.log(url);
     var code = "";
     $.get(url, function(data) {
         data.forEach(task => {
@@ -8,8 +9,8 @@ function loadTasks(idProject){
             code += "<td>"+task.libelle+"</td>";
             code += "<td>"+task.etat+"</td>";
             code += "<td>";
-            code += "<button class='btn btn-primary btn-xs' onclick='showTask("+id+","+task.id+")'><i class='fa fa-pencil'></i></button>";
-            code += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+id+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
+            code += "<button class='btn btn-primary btn-xs' onclick='showTask("+idProject+","+task.id+")'><i class='fa fa-pencil'></i></button>";
+            code += "<button class='btn btn-danger btn-xs' onclick='deleteTask("+idProject+","+task.id+")'><i class='fa fa-trash-o'></i></button>";
             code += "</td>";
             code += "</tr>";
         });
@@ -18,7 +19,7 @@ function loadTasks(idProject){
 }
 
 function showTask(idProject,idTask){
-    var url = `${urlBase}task?idProject=${idProject}&idTask=${idTask}`;
+    var url = `${urlBase}index.php?operation=enum&type=projet_tache&idProjet=${idProject}&idTache=${idTask}`;
     $.get(url, function(data) {
         $("#id_tache").val(data.id);
         $("#libelle_tache").val(data.libelle);
@@ -31,16 +32,12 @@ function showTask(idProject,idTask){
 
 function deleteTask(idProject,idTask){
     if (window.confirm("Etes vous sur de vouloir supprimer ?")) {
-        var url = `${urlBase}task?idProjet=${idProject}&id=${idTask}`;
-        $.ajax({
-            url: url,
-            type: 'DELETE',
-            success: function (response) {
-                if (response.code === CODE_SUCCES) {
-                    swal(PROJECT_NAME, "Suppression tâche réussite !", "Success");
-                    loadTasks(idProject);
-                    clearTaskForm();
-                }
+        var url = `${urlBase}index.php?operation=delete&type=tache&id=${idTask}`;
+        $.get(url, function(data) {
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Suppression tache réussite !","Success");
+                loadTasks(idProject);
+                clearTaskForm();
             }
         });
     }
@@ -57,6 +54,8 @@ function clearTaskForm(){
 
 function createTaskRequest(){
     return {
+        idTache: $("#id_tache").val(),
+        idProjet: $("#id_projet").val(),
         libelle: $("#libelle_tache").val(),
         etat: $("#status_tache").val(),
         estimation: $("#estimation_tache").val(),
@@ -72,7 +71,7 @@ function saveTask() {
     var url = "";
     if (idTask === ''){
         // CREATION D'UNE TACHE
-        url = `${urlBase}task?idProjet=${idProject}`;
+        url = `${urlBase}index.php?operation=create&type=tache`;
         $.post(url, request, function(data){
             if (data.code === CODE_SUCCES){
                 swal(PROJECT_NAME,"Création tâche réussite !","Success");
@@ -82,17 +81,13 @@ function saveTask() {
         });
     }else{
         //MODIFICATION D'UNE TACHE
-        url = `${urlBase}task?idProjet=${idProject}&id=${idTask}`;
-        $.ajax({
-            url: url,
-            data: request,
-            type: 'PUT',
-            success: function(response){
-                if (response.code === CODE_SUCCES){
-                    swal(PROJECT_NAME,"Modification tâche réussite !","Success");
-                    loadTasks(idProject);
-                }
+        url = `${urlBase}index.php?operation=update&type=tache`;
+        $.post(url, request, function(data){
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Modification tâche réussite !","Success");
+                loadTasks(idProject);
             }
         });
+
     }
 }

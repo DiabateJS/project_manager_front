@@ -1,5 +1,5 @@
 function loadProjects(){
-    var url = `${urlBase}projects`;
+    var url = `${urlBase}index.php?operation=enum&type=projets`;
     var projects_table_body = "";
     $.get(url, function(data){
         data.forEach(project => {
@@ -19,6 +19,7 @@ function loadProjects(){
 
 function createRequest(){
     return {
+        idProjet: $("#id_projet").val(),
         libelle: $("#libelle_projet").val(),
         etat: $("#status_projet").val(),
         description: $("#description_projet").val()
@@ -27,7 +28,7 @@ function createRequest(){
 
 function saveProject() {
     var request = createRequest();
-    var url=`${urlBase}project`;
+    var url=`${urlBase}index.php?operation=create&type=projet`;
     var id = $("#id_projet").val();
     if (id === ''){
         // CREATION D'UN PROJET
@@ -41,15 +42,13 @@ function saveProject() {
         });
     }else{
         //MODIFICATION D'UN PROJET
-        var url = `${urlBase}project?id=${id}`;
-        $.ajax({
-            url: url,
-            data: request,
-            type: 'PUT',
-            success: function(response){
-                if (response.code === CODE_SUCCES){
-                    swal(PROJECT_NAME,"Modification Projet réussite !","Success");
-                }
+        var url = `${urlBase}index.php?operation=update&type=projet`;
+        $.post(url, request, function(data){
+            console.log(data);
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Mise à jour du  projet réussite !","Success");
+                loadProjects();
+                clearProjectForm();
             }
         });
     }
@@ -65,9 +64,9 @@ function clearProjectForm(){
 }
 
 function showProject(id){
-    var url = `${urlBase}project?id=${id}`;
+    var url = `${urlBase}index.php?operation=enum&type=projet&idProjet=${id}`;
     $.get(url, function(data) {
-        tasks = data.tasks;
+        tasks = data.taches;
         $("#id_projet").val(data.id);
         $("#libelle_projet").val(data.libelle);
         $("#status_projet").val(data.etat);
@@ -92,15 +91,14 @@ function showProject(id){
 
 function deleteProject(id){
     if (window.confirm("Etes vous sur de vouloir supprimer ?")){
-        var url = `${urlBase}project?id=${id}`;
-        $.ajax({
-            url: url,
-            type: 'DELETE',
-            success: function(response){
-                if (response.code === CODE_SUCCES){
-                    swal(PROJECT_NAME,"Suppression Projet réussite !","Success");
-                    loadProjects();
-                }
+        var url = `${urlBase}index.php?operation=delete&type=projet&id=${id}`;
+        $.get(url, function(data) {
+            if (data.code === CODE_SUCCES){
+                swal(PROJECT_NAME,"Suppression Projet réussite !","Success");
+                loadProjects();
+            }
+            if (data.code === CODE_WARNING){
+                swal(PROJECT_NAME,data.message,"Warning");
             }
         });
     }
