@@ -29,26 +29,26 @@
   ======================================================= -->
 </head>
 
-<body>
+<body ng-app="app">
   <!-- **********************************************************************************************************************************************************
       MAIN CONTENT
       *********************************************************************************************************************************************************** -->
-  <div id="login-page">
+  <div id="login-page" ng-controller="UserAuthCtrl">
     <div class="container">
       <form class="form-login" action="accueil.html">
         <h2 class="form-login-heading">Authentification</h2>
-        <div id="msg_auth"></div>
+        <div class="text-center">{{message}}</div>
         <div class="login-wrap">
-          <input type="text" class="form-control" id="login" placeholder="User ID" autofocus>
+          <input type="text" class="form-control" ng-model="user.login" placeholder="User ID" autofocus>
           <br>
-          <input type="password" class="form-control" id="pwd" placeholder="Password">
+          <input type="password" class="form-control" ng-model="user.password" placeholder="Password">
           <label class="checkbox">
             <input type="checkbox" value="remember-me"> Remember me
             <span class="pull-right">
             <a data-toggle="modal" href="index.html#myModal"> Forgot Password?</a>
             </span>
             </label>
-          <button class="btn btn-theme btn-block" href="index.html" type="button" id="btnSubmit"><i class="fa fa-lock"></i> Valider</button>
+          <button class="btn btn-theme btn-block" href="index.html" type="button" ng-click="auth()"><i class="fa fa-lock"></i> Valider</button>
           <hr>
           <div class="login-social-link centered">
             <p>or you can sign in via your social network</p>
@@ -91,30 +91,13 @@
   <!--BACKSTRETCH-->
   <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
   <script type="text/javascript" src="lib/jquery.backstretch.min.js"></script>
-  <script src="js/config.js"></script>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services/ConfigService.js"></script>
+  <script src="js/controlers/UserAuthCtrl.js"></script>
   <script>
     $.backstretch("img/login-bg.jpg", {
       speed: 500
-    });
-  </script>
-  <script type="text/javascript">
-    $(document).ready(function() {
-
-      $("#btnSubmit").click(function(){
-        var authReq = {
-          login: $("#login").val(),
-          password: $("#pwd").val()
-        };
-        var url = `${urlBase}index.php?operation=auth`;
-        $.post(url, authReq, function(data){
-          if (data.code === CODE_SUCCES){
-            document.location.href=`accueil.html?user=${data.message}`;
-          }
-        }).fail(function(response){
-          $("#msg_auth").html("<b>Echec authentification !</b>");
-        });
-      });
-
     });
   </script>
 </body>

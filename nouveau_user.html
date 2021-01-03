@@ -31,8 +31,8 @@
   ======================================================= -->
 </head>
 
-<body>
-  <section id="container">
+<body ng-app="app">
+  <section id="container" ng-controller="UsersCtrl" ng-init="loadUsers()">
     <!-- **********************************************************************************************************************************************************
         TOP BAR CONTENT & NOTIFICATIONS
         *********************************************************************************************************************************************************** -->
@@ -399,7 +399,18 @@
                   <th>Email</th>
                   <th></th>
                 </thead>
-                <tbody id="table_users_body"></tbody>
+                <tbody>
+                <tr ng-repeat="user in users">
+                  <td>{{user.id}}</td>
+                  <td>{{user.fullname}}</td>
+                  <td>{{user.login}}</td>
+                  <td>{{user.email}}</td>
+                  <td>
+                    <button class='btn btn-primary btn-xs' ng-click="showUser(user.id)"><i class='fa fa-pencil'></i></button>
+                    <button class='btn btn-danger btn-xs' ng-click="deleteUser(user.id)"><i class='fa fa-trash-o'></i></button>
+                  </td>
+                </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -410,37 +421,37 @@
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Id</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="id_user" readonly>
+                    <input type="text" class="form-control" ng-model="user.id" readonly>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Nom Complet</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="fullname_user">
+                    <input type="text" class="form-control" ng-model="user.fullname">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Login</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="login_user">
+                    <input type="text" class="form-control" ng-model="user.login">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Password</label>
                   <div class="col-sm-10">
-                    <input type="password" class="form-control" id="password_user">
+                    <input type="password" class="form-control" ng-model="user.password">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Email</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="email_user">
+                    <input type="text" class="form-control" ng-model="user.email">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 col-sm-2 control-label">Profile</label>
                   <div class="col-sm-10">
-                    <select class="form-control" id="profile_user">
+                    <select class="form-control" ng-model="user.profile">
                       <option value="SIMPLE_USER_PROFILE">Simple Utilisateur</option>
                       <option value="SCRUM_MASTER_PROFILE">Gestionnaire de projet</option>
                       <option value="ADMIN_PROFILE">Administrateur</option>
@@ -449,8 +460,8 @@
                 </div>
                 <div class="form-group">
                   <div class="col-lg-offset-2 col-lg-10">
-                    <button class="btn btn-theme" type="button" onclick="saveUser()">Save</button>
-                    <button class="btn btn-theme04" type="button" onclick="clearUserForm()">Cancel</button>
+                    <button class="btn btn-theme" type="button" ng-click="saveUser()">Save</button>
+                    <button class="btn btn-theme04" type="button" ng-click="clearUserForm()">Cancel</button>
                   </div>
                 </div>
               </form>
@@ -467,7 +478,7 @@
     <footer class="site-footer">
       <div class="text-center">
         <p>
-          &copy; Copyrights <strong>Dashio</strong>. All Rights Reserved
+          &copy; Copyrights <strong>{{name}}</strong>. All Rights Reserved
         </p>
         <div class="credits">
           <!--
@@ -476,7 +487,7 @@
             Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/dashio-bootstrap-admin-template/
             Licensing information: https://templatemag.com/license/
           -->
-          Created with Dashio template by <a href="https://templatemag.com/">TemplateMag</a>
+          Created with Dashio template by <a href="https://templatemag.com/">{{enterprise}}</a>
         </div>
         <a href="form_component.html#" class="go-top">
           <i class="fa fa-angle-up"></i>
@@ -506,15 +517,10 @@
   <script type="text/javascript" src="lib/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
   <script src="lib/form-component.js"></script>
   <script src="node_modules/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/users.js"></script>
-  <script>
-
-    $(document).ready(function() {
-      loadUsers();
-    });
-
-  </script>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services/ConfigService.js"></script>
+  <script src="js/controlers/UsersCtrl.js"></script>
 
 </body>
 

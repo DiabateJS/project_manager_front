@@ -33,8 +33,8 @@
   ======================================================= -->
 </head>
 
-<body>
-  <section id="container">
+<body ng-app="app">
+  <section id="container" ng-controller="AccueilCtrl" data-ng-init="loadStatData()">
     <!-- **********************************************************************************************************************************************************
         TOP BAR CONTENT & NOTIFICATIONS
         *********************************************************************************************************************************************************** -->
@@ -247,7 +247,7 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered" id="userName"></h5>
+          <h5 class="centered">{{currentUser.fullname}}</h5>
           <li class="mt">
             <a class="active" href="accueil.html">
               <i class="fa fa-dashboard"></i>
@@ -431,6 +431,62 @@
               </div>
             </div>
             <!--custom chart end-->
+            </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="border-head">
+                    <h3>PROJECTS STATISTIQUES</h3>
+                  </div>
+                  <table class="table table-striped">
+                    <tbody>
+                    <tr>
+                      <td colspan="2" class="text-center">Projets</td>
+                    </tr>
+                    <tr>
+                      <td>Nombre de projets</td>
+                      <td>{{stat.nbreProjets}}</td>
+                    </tr>
+                    <tr>
+                      <td>Projets a faire</td>
+                      <td>{{stat.projetsParEtat[0].nbre}}</td>
+                    </tr>
+                    <tr>
+                      <td>Projets en cours</td>
+                      <td>{{stat.projetsParEtat[1].nbre}}</td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" class="text-center">Taches</td>
+                    </tr>
+                    <tr>
+                      <td>Nombre de taches</td>
+                      <td>{{stat.nbreTaches}}</td>
+                    </tr>
+                    <tr>
+                      <td>Nombre de taches terminées</td>
+                      <td>{{stat.tachesParEtat[2].nbre}}</td>
+                    </tr>
+                    <tr>
+                      <td>Nombre de taches en cours</td>
+                      <td>{{stat.tachesParEtat[1].nbre}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-lg-4">
+                  <table class="table table-striped">
+                    <thead>
+                    <th>Projets</th>
+                    <th>Nbre de taches</th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="projet in stat.tachesParProjet">
+                      <td>{{projet.libelle}}</td>
+                      <td>{{projet.nbre}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             <div class="row mt">
               <!-- SERVER STATUS PANELS -->
               <div class="col-md-4 col-sm-4 mb">
@@ -811,7 +867,7 @@
     <footer class="site-footer">
       <div class="text-center">
         <p>
-          &copy; Copyrights <strong>Dashio</strong>. All Rights Reserved
+          &copy; Copyrights <strong>{{name}}</strong>. All Rights Reserved
         </p>
         <div class="credits">
           <!--
@@ -820,7 +876,7 @@
             Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/dashio-bootstrap-admin-template/
             Licensing information: https://templatemag.com/license/
           -->
-          Created with Dashio template by <a href="https://templatemag.com/">TemplateMag</a>
+          Created with Dashio template by <a href="https://templatemag.com/">{{enterprise}}</a>
         </div>
         <a href="accueil.html#" class="go-top">
           <i class="fa fa-angle-up"></i>
@@ -864,6 +920,10 @@
       return false;
     });
   </script>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services/ConfigService.js"></script>
+  <script src="js/controlers/AccueilCtrl.js"></script>
   <script type="application/javascript">
     $(document).ready(function() {
       $("#date-popover").popover({
@@ -897,11 +957,6 @@
           }
         ]
       });
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      if (urlParams.has('user')){
-        $("#userName").html(urlParams.get('user'));
-      }
     });
 
     function myNavFunction(id) {
