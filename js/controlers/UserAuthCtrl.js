@@ -1,4 +1,4 @@
-app.controller("UserAuthCtrl", function($scope, $http, ConfigService){
+auth.controller("UserAuthCtrl", function($scope, $http, ConfigService){
     $scope.message = "";
     $scope.user = {};
     $scope.message_createuser = "";
@@ -9,7 +9,7 @@ app.controller("UserAuthCtrl", function($scope, $http, ConfigService){
         var url = `${ConfigService.urlBase}index.php?operation=auth`;
         $.post(url, $scope.user, function(data){
             if (data.code === ConfigService.CODE_SUCCES){
-                document.location.href=`accueil.html?user=${data.message}`;
+                document.location.href=`accueil.html#!home`;
             }else{
                 $scope.message = "Echec authentification !";
             }

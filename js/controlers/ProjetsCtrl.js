@@ -1,4 +1,4 @@
-app.controller("ProjetsCtrl", function($scope, ConfigService,$http){
+app.controller("ProjetsCtrl", function($scope, ConfigService, Helper, ProjectService, UserService, TaskService){
 
     $scope.name = ConfigService.name;
     $scope.enterprise = ConfigService.enterprise;
@@ -17,44 +17,26 @@ app.controller("ProjetsCtrl", function($scope, ConfigService,$http){
     }
 
     $scope.loadProjects = () => {
-        $http({
-            method:'GET',
-            url: `${ConfigService.urlBase}index.php?operation=enum&type=projets`
-        }).then((response) => {
-                $scope.projects = response.data;
-            },
-            (response) => {
-                console.log(response);
-            }
-        );
+        ProjectService.getProjects().then(response => {
+            $scope.projects = response.data;
+        },error => {
+            Helper.errorCallback(error);
+        });
     }
 
     $scope.loadUsers = () => {
-        $http({
-            method:'GET',
-            url: `${ConfigService.urlBase}index.php?operation=enum&type=users`
-        }).then((response) => {
-                $scope.users = response.data;
-            },
-            (response) => {
-                console.log("Erreur !");
-                console.log(response);
-            }
-        );
+        UserService.getUsers().then(response => {
+            $scope.users = response.data;
+        }, error => Helper.errorCallback(error));
     }
 
     $scope.showProject = (id) => {
-        $http({
-            method:'GET',
-            url: `${ConfigService.urlBase}index.php?operation=enum&type=projet&idProjet=${id}`
-        }).then((response) => {
-                $scope.project = response.data;
-                $scope.tasks = response.data.taches;
-            },
-            (response) => {
-                console.log("Erreur !");
-                console.log(response);
-            }
+        ProjectService.getProject(id).then(response => {
+            $scope.project = response.data;
+            $scope.project.dateDebut = new Date(response.data.dateDebut);
+            $scope.project.dateFin = new Date(response.data.dateFin);
+            $scope.tasks = response.data.taches;
+        }, error => Helper.errorCallback(error)
         );
     }
 
@@ -64,6 +46,8 @@ app.controller("ProjetsCtrl", function($scope, ConfigService,$http){
             idProjet: $scope.project.id ? $scope.project.id : "",
             libelle: $scope.project.libelle,
             etat: $scope.project.etat,
+            dateDebut: $scope.project.dateDebut,
+            dateFin: $scope.project.dateFin,
             description: $scope.project.description
         };
     }
@@ -76,80 +60,55 @@ app.controller("ProjetsCtrl", function($scope, ConfigService,$http){
             etat: $scope.task.etat,
             estimation: $scope.task.estimation,
             user: $scope.task.user,
+            dateDebut: $scope.task.dateDebut,
+            dateFin: $scope.task.dateFin,
             description: $scope.task.description
         };
     }
 
     $scope.saveProject = () => {
         var request = createProjectRequest();
-        var url = `${ConfigService.urlBase}index.php?operation=create&type=projet`;
         console.log(request);
         if (!$scope.project.id){
             // CREATION D'UN PROJET
-            $.post(url, request, function(data){
-                if (data.code === ConfigService.CODE_SUCCES){
-                    //swal(PROJECT_NAME,"Création tâche réussite !","Success");
+            ProjectService.saveProject(request).then(response => {
+                if (response.data.code === ConfigService.CODE_SUCCES){
                     $scope.loadProjects();
                     $scope.clearProjectForm();
                 }
-            });
+            }, error => Helper.errorCallback(error));
         }else{
-            url = `${ConfigService.urlBase}index.php?operation=update&type=projet`;
             //MODIFICATION D'UN PROJET
-            $.post(url, request, function(data){
-                if (data.code === ConfigService.CODE_SUCCES){
-                    //swal(PROJECT_NAME,"Mise à jour du  projet réussite !","Success");
-                    console.log("Mise à jour du  projet réussite !");
+            ProjectService.updateProject(request).then(response => {
+                if (response.data.code === ConfigService.CODE_SUCCES){
                     $scope.loadProjects();
                     $scope.clearProjectForm();
                 }
-            });
+            }, error => Helper.errorCallback(error));
         }
     }
 
     $scope.deleteProject = (idProject) => {
         if (window.confirm("Etes vous sur de vouloir supprimer ?")) {
-            $http({
-                method: 'GET',
-                url: `${ConfigService.urlBase}index.php?operation=delete&type=projet&id=${idProject}`
-            }).then((response) => {
-                    console.log("Suppression Projet réussite !");
-                    $scope.loadProjects();
-                },
-                (response) => {
-                    console.log("Erreur !");
-                    console.log(response);
-                }
-            );
+            ProjectService.deleteProject(idProject).then(response => {
+                console.log("Suppression Projet réussite !");
+                $scope.loadProjects();
+            }, error => Helper.errorCallback(error));
         }
     }
 
     $scope.loadTasks = (idProject) => {
-        $http({
-            method:'GET',
-            url: `${ConfigService.urlBase}index.php?operation=enum&type=projet_taches&idProjet=${idProject}`
-        }).then((response) => {
-                $scope.tasks = response.data;
-            },
-            (response) => {
-                console.log("Erreur !");
-                console.log(response);
-            }
-        );
+        TaskService.getTasks(idProject).then(response => {
+            $scope.tasks = response.data;
+        }, error => Helper.errorCallback(error));
     }
 
     $scope.showTask = (idProject,idTask) => {
-        $http({
-            method:'GET',
-            url: `${ConfigService.urlBase}index.php?operation=enum&type=projet_tache&idProjet=${idProject}&idTache=${idTask}`
-        }).then((response) => {
-                $scope.task = response.data;
-            },
-            (response) => {
-                console.log("Erreur !");
-                console.log(response);
-            }
-        );
+        TaskService.getTask(idProject, idTask).then(response => {
+            $scope.task = response.data;
+            $scope.task.dateDebut = new Date(response.data.dateDebut);
+            $scope.task.dateFin = new Date(response.data.dateFin);
+        }, error => Helper.errorCallback(error));
     }
 
     $scope.saveTask = () => {
@@ -160,44 +119,36 @@ app.controller("ProjetsCtrl", function($scope, ConfigService,$http){
         var request = createTaskRequest();
         console.log("request");
         console.log(request);
-        var url = "";
         if (!idTask){
             console.log("creation tache");
             // CREATION D'UNE TACHE
-            url = `${ConfigService.urlBase}index.php?operation=create&type=tache`;
-            $.post(url, request, function(data){
-                if (data.code === ConfigService.CODE_SUCCES){
-                    //swal(PROJECT_NAME,"Création tâche réussite !","Success");
+            TaskService.saveTask(request).then(response => {
+                if (response.data.code === ConfigService.CODE_SUCCES){
                     console.log("Création tâche réussite !");
                     $scope.loadTasks(idProject);
                     $scope.clearTaskForm();
                 }
-            });
+            },error => Helper.errorCallback(error));
         }else{
             //MODIFICATION D'UNE TACHE
-            url = `${ConfigService.urlBase}index.php?operation=update&type=tache`;
-            $.post(url, request, function(data){
-                if (data.code === ConfigService.CODE_SUCCES){
-                    //swal(PROJECT_NAME,"Modification tâche réussite !","Success");
+            TaskService.updateTask(request).then(response => {
+                if (response.data.code === ConfigService.CODE_SUCCES){
                     console.log("Modification tâche réussite !");
                     $scope.loadTasks(idProject);
                 }
-            });
-
+            }, error => Helper.errorCallback(error));
         }
     }
 
     $scope.deleteTask = (idProject, idTask) => {
         if (window.confirm("Etes vous sur de vouloir supprimer ?")) {
-            var url = `${ConfigService.urlBase}index.php?operation=delete&type=tache&id=${idTask}`;
-            $.get(url, function(data) {
-                if (data.code === ConfigService.CODE_SUCCES){
-                    //swal(PROJECT_NAME,"Suppression tache réussite !","Success");
+            TaskService.deleteTask(idTask).then(response => {
+                if (response.data.code === ConfigService.CODE_SUCCES){
                     console.log("Suppression tache réussite !");
                     $scope.loadTasks(idProject);
                     $scope.clearTaskForm();
                 }
-            });
+            }, error => Helper.errorCallback(error));
         }
     }
 
