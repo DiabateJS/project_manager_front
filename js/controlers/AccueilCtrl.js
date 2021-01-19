@@ -1,14 +1,11 @@
-app.controller("AccueilCtrl", function($scope, $http, ConfigService){
-    $scope.currentUser = {
-        login: "jean.diabate",
-        fullname: "Jean Diabate"
-    }
+app.controller("AccueilCtrl", function($scope,$rootScope, $http, Helper, ConfigService, $routeParams, UserService){
+    $rootScope.currentUser = {};
 
     $scope.name = ConfigService.name;
     $scope.enterprise = ConfigService.enterprise;
     $scope.stat = {}
 
-    $scope.loadStatData = () => {
+    $scope.loadData = () => {
         $http({
             method:'GET',
             url: `${ConfigService.urlBase}index.php?operation=stat`
@@ -20,6 +17,13 @@ app.controller("AccueilCtrl", function($scope, $http, ConfigService){
             }
 
         );
+
+        UserService.getUser($routeParams.idUser).then(response => {
+            if (response.data){
+                $rootScope.currentUser = response.data;
+            }
+        },error => Helper.errorCallback(error));
+
     }
 
 

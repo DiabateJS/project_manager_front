@@ -247,44 +247,25 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">jean.diabate</h5>
+          <h5 class="centered" id="userName">{{currentUser.fullname}}</h5>
           <li class="mt">
-            <a class="active" href="#!home">
+            <a class="active" href="#!home/{{currentUser.id}}">
               <i class="fa fa-dashboard"></i>
               <span>Dashboard</span>
               </a>
           </li>
           <li>
-            <a href="#!projects">
+            <a href="#!projects/{{currentUser.id}}">
               <i class="fa fa-desktop"></i>
               <span>Projets </span>
             </a>
           </li>
-          <li>
+          <li ng-if="currentUser.profile === 'ADMIN_PROFILE'">
             <a href="#!users">
               <i class="fa fa-group"></i>
               <span>Users </span>
             </a>
           </li>
-          <!--<li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-desktop"></i>
-              <span>Projets</span>
-            </a>
-            <ul class="sub">
-              <li><a href="#!projects">Nouveau</a></li>
-            </ul>
-          </li>-->
-          <!--<li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-group"></i>
-              <span>Users</span>
-            </a>
-            <ul class="sub">
-              <li><a href="#!users">Nouveau</a></li>
-              <li><a href="user_profile.html">Profile</a></li>
-            </ul>
-          </li>-->
           <li>
             <a href="inbox.html">
               <i class="fa fa-envelope"></i>

@@ -1,4 +1,4 @@
-app.controller("ProjetsCtrl", function($scope, ConfigService, Helper, ProjectService, UserService, TaskService){
+app.controller("ProjetsCtrl", function($scope, ConfigService, Helper, ProjectService, UserService, TaskService,$routeParams){
 
     $scope.name = ConfigService.name;
     $scope.enterprise = ConfigService.enterprise;
@@ -17,7 +17,7 @@ app.controller("ProjetsCtrl", function($scope, ConfigService, Helper, ProjectSer
     }
 
     $scope.loadProjects = () => {
-        ProjectService.getProjects().then(response => {
+        UserService.getUserProjects($routeParams.idUser).then(response => {
             $scope.projects = response.data;
         },error => {
             Helper.errorCallback(error);

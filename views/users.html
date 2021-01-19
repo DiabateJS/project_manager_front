@@ -1,4 +1,4 @@
-<section class="wrapper" ng-init="loadUsers()">
+<section class="wrapper" ng-init="loadData()">
     <h3><i class="fa fa-angle-right"></i> Créer un utilisateur</h3>
     <!-- BASIC FORM ELELEMNTS -->
     <div class="row mt">
@@ -76,6 +76,53 @@
                         <div class="col-lg-offset-2 col-lg-10">
                             <button class="btn btn-theme" type="button" ng-click="saveUser()">Save</button>
                             <button class="btn btn-theme04" type="button" ng-click="clearUserForm()">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- col-lg-12-->
+    </div>
+    <div class="row mt">
+        <div class="col-lg-6">
+            <div class="form-panel">
+                <h4 class="mb"><i class="fa fa-angle-right"></i> Projets affectés</h4>
+                <table class="table table-striped">
+                    <thead>
+                    <th>Id</th>
+                    <th>Libelle</th>
+                    <th>Etat</th>
+                    <th>Description</th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="projet in userProjets">
+                        <td>{{projet.id}}</td>
+                        <td>{{projet.libelle}}</td>
+                        <td>{{projet.etat}}</td>
+                        <td>{{projet.description}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-panel">
+                <h4 class="mb"><i class="fa fa-angle-right"></i> Affecter utilisateur projet</h4>
+                <form class="form-horizontal style-form" method="get">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">Projet</label>
+                        <div class="col-sm-10">
+                            <div class="col-sm-10">
+                                <select class="form-control" ng-model="selectedProjectId">
+                                    <option ng-repeat="project in projects" value="{{project.id}}">{{project.libelle}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <button class="btn btn-theme" type="button" ng-click="addUserToProject()">Ajouter</button>
+                            <button class="btn btn-theme04" type="button" ng-click="clearAddUserForm()">Annuler</button>
                         </div>
                     </div>
                 </form>

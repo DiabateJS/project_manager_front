@@ -9,7 +9,7 @@ auth.controller("UserAuthCtrl", function($scope, $http, ConfigService){
         var url = `${ConfigService.urlBase}index.php?operation=auth`;
         $.post(url, $scope.user, function(data){
             if (data.code === ConfigService.CODE_SUCCES){
-                document.location.href=`accueil.html#!home`;
+                document.location.href=`accueil.html#!home/${data.id}`;
             }else{
                 $scope.message = "Echec authentification !";
             }

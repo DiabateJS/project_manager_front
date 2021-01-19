@@ -1,11 +1,11 @@
 var app = angular.module("app",['ngRoute']);
 app.config(['$routeProvider', function config($routeProvider){
     $routeProvider.
-        when('/home',{
+        when('/home/:idUser',{
             templateUrl: 'views/home.html',
             controller: 'AccueilCtrl'
         }).
-        when('/projects',{
+        when('/projects/:idUser',{
             templateUrl: 'views/projects.html',
             controller: 'ProjetsCtrl'
         }).
